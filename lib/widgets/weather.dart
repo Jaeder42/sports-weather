@@ -45,26 +45,36 @@ class _WeatherState extends State<Weather> {
         return;
       }
     }
+    print(location);
+    try {
+      _locationData = await location.getLocation();
 
-    _locationData = await location.getLocation();
-    print(_locationData);
-    getWeatherData(_locationData.latitude, _locationData.longitude);
+      print(_locationData);
+      getWeatherData(_locationData.latitude, _locationData.longitude);
+    } catch (err) {
+      print(err);
+      getWeatherData('59.458344', '18.074890');
+    }
   }
 
   getWeatherData(lat, lon) async {
-    var result = await http.get(Uri.parse(
-        'https://api.met.no/weatherapi/locationforecast/2.0/complete.json?lat=$lat&lon=$lon'));
+    try {
+      var result = await http.get(Uri.parse(
+          'https://api.met.no/weatherapi/locationforecast/2.0/complete.json?lat=$lat&lon=$lon'));
 
-    var sunResult = await http.get(Uri.parse(
-        'https://api.sunrise-sunset.org/json?lat=$lat&lng=$lon&formatted=0'));
+      var sunResult = await http.get(Uri.parse(
+          'https://api.sunrise-sunset.org/json?lat=$lat&lng=$lon&formatted=0'));
 
 //https://sunrise-sunset.org/api remember to give attribution
-    setState(() {
-      loading = false;
-      weatherData = jsonDecode(result.body);
-      sunData = jsonDecode(sunResult.body);
-      print(sunData);
-    });
+      setState(() {
+        loading = false;
+        weatherData = jsonDecode(result.body);
+        sunData = jsonDecode(sunResult.body);
+        print(sunData);
+      });
+    } catch (e) {
+      print(e);
+    }
   }
 
   @override
