@@ -4,6 +4,8 @@ import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:sport_weather/widgets/sports/running.dart';
 
+import '../geolocation.dart';
+
 class Weather extends StatefulWidget {
   @override
   State<StatefulWidget> createState() {
@@ -17,8 +19,6 @@ class _WeatherState extends State<Weather> {
   var sunData;
   @override
   void initState() {
-    // TODO: implement initState
-    // getWeatherData();
     getLocation();
     super.initState();
   }
@@ -28,7 +28,7 @@ class _WeatherState extends State<Weather> {
 
     bool _serviceEnabled;
     PermissionStatus _permissionGranted;
-    LocationData _locationData;
+    LatLon _locationData;
 
     _serviceEnabled = await location.serviceEnabled();
     if (!_serviceEnabled) {
@@ -45,12 +45,13 @@ class _WeatherState extends State<Weather> {
         return;
       }
     }
-    print(location);
+    // print(location);
     try {
-      _locationData = await location.getLocation();
-
-      print(_locationData);
-      getWeatherData(_locationData.latitude, _locationData.longitude);
+      GeolocationT.getCurrentPosition((e) {
+        _locationData = LatLon(e.coords.latitude, e.coords.longitude);
+        getWeatherData(_locationData.latitude, _locationData.longitude);
+      }, (e) => print(e),
+          {"enableHighAccuracy": true, "timeout": 5000, "maximumAge": 0});
     } catch (err) {
       print(err);
       getWeatherData('59.458344', '18.074890');
@@ -70,7 +71,7 @@ class _WeatherState extends State<Weather> {
         loading = false;
         weatherData = jsonDecode(result.body);
         sunData = jsonDecode(sunResult.body);
-        print(sunData);
+        // print(sunData);
       });
     } catch (e) {
       print(e);
@@ -86,4 +87,11 @@ class _WeatherState extends State<Weather> {
           : Running(weatherData['properties']['timeseries']),
     ));
   }
+}
+
+class LatLon {
+  final double latitude;
+  final double longitude;
+
+  LatLon(this.latitude, this.longitude);
 }

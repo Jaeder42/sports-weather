@@ -63,13 +63,13 @@ class RainChart extends StatelessWidget {
                     format: 'HH:mm', transitionFormat: 'HH:mm'),
               )),
 
-              primaryMeasureAxis: charts.NumericAxisSpec(
-                  // Set the initial viewport by providing a new AxisSpec with the
-                  // desired viewport, in NumericExtents.
-                  viewport: charts.NumericExtents(0.0, 100.0)),
-              // Optionally add a pan or pan and zoom behavior.
-              // If pan/zoom is not added, the viewport specified remains the viewport.
-              behaviors: [charts.PanAndZoomBehavior()],
+              // primaryMeasureAxis: charts.NumericAxisSpec(
+              //     // Set the initial viewport by providing a new AxisSpec with the
+              //     // desired viewport, in NumericExtents.
+              //     viewport: charts.NumericExtents(0.0, 100.0)),
+              // // Optionally add a pan or pan and zoom behavior.
+              // // If pan/zoom is not added, the viewport specified remains the viewport.
+              // behaviors: [charts.PanAndZoomBehavior()],
             ))));
   }
 }
