@@ -48,7 +48,6 @@ class WeatherIcon extends StatelessWidget {
 
   WeatherIcon(String symbol) {
     // clear _any from symbol
-    print(symbol);
     symbol = symbol.replaceAll(RegExp(r'_.+'), '');
     icon = icons[symbol] ?? FontAwesomeIcons.question;
   }

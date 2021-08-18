@@ -48,7 +48,6 @@ class _WeatherState extends State<Weather> {
         return;
       }
     }
-    // print(location);
     try {
       GeolocationT.getCurrentPosition((e) {
         _locationData = LatLon(e.coords.latitude, e.coords.longitude);
@@ -94,6 +93,7 @@ class _WeatherState extends State<Weather> {
           : RefreshIndicator(
               onRefresh: _refresh,
               child: CustomScrollView(slivers: [
+                SliverPadding(padding: EdgeInsets.only(top: 40)),
                 SliverToBoxAdapter(
                     child: Running(
                         weatherData['properties']['timeseries'], sunData))
@@ -114,8 +114,8 @@ class SunData {
   late DateTime sunset;
 
   SunData(String sunrise, String sunset) {
-    this.sunrise = DateTime.parse(sunrise);
-    this.sunset = DateTime.parse(sunset);
+    this.sunrise = DateTime.parse(sunrise).toLocal();
+    this.sunset = DateTime.parse(sunset).toLocal();
   }
   @override
   String toString() {

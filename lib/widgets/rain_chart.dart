@@ -23,8 +23,6 @@ class RainChart extends StatelessWidget {
     var firstValue =
         weatherData[0]['data']['next_1_hours']['details']['$value'];
 
-    print('noPoints: $noPoints, start: $startArray');
-
     List<Point> data = List.generate(
         noPoints,
         (index) =>
@@ -35,10 +33,7 @@ class RainChart extends StatelessWidget {
       var nextHour = weatherData[j]['data']['next_1_hours'];
       if (nextHour != null) {
         double chance = nextHour['details']['$value'];
-        print(data[i]);
         data[i] = (Point(DateTime.parse(weatherData[j]['time']), chance));
-        print(data[i]);
-        print('---------------------');
       }
       j++;
     }

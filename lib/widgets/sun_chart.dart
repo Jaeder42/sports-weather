@@ -1,5 +1,5 @@
 import 'dart:math';
-
+import 'package:intl/intl.dart';
 import 'package:charts_flutter/flutter.dart' as charts;
 import 'package:flutter/material.dart';
 import 'package:sport_weather/widgets/weather.dart';
@@ -34,8 +34,14 @@ class SunChart extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Stack(children: [
-      Positioned(bottom: 80, left: 0, child: Text('06:00')),
-      Positioned(bottom: 80, right: 0, child: Text('22:00')),
+      Positioned(
+          bottom: 80,
+          left: 0,
+          child: Text(DateFormat('HH:mm').format(sunData.sunrise))),
+      Positioned(
+          bottom: 80,
+          right: 0,
+          child: Text(DateFormat('HH:mm').format(sunData.sunset))),
       Container(
           height: 200,
           width: 200,
