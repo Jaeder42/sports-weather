@@ -16,7 +16,7 @@ class Weather extends StatefulWidget {
 class _WeatherState extends State<Weather> {
   bool loading = true;
   var weatherData;
-  var sunData;
+  late SunData sunData;
   @override
   void initState() {
     getLocation();
@@ -24,6 +24,9 @@ class _WeatherState extends State<Weather> {
   }
 
   getLocation() async {
+    setState(() {
+      loading = true;
+    });
     Location location = new Location();
 
     bool _serviceEnabled;
@@ -65,17 +68,21 @@ class _WeatherState extends State<Weather> {
 
       var sunResult = await http.get(Uri.parse(
           'https://api.sunrise-sunset.org/json?lat=$lat&lng=$lon&formatted=0'));
-
+      var sunJson = jsonDecode(sunResult.body);
 //https://sunrise-sunset.org/api remember to give attribution
       setState(() {
         loading = false;
         weatherData = jsonDecode(result.body);
-        sunData = jsonDecode(sunResult.body);
-        // print(sunData);
+        sunData = SunData(
+            sunJson['results']['sunrise'], sunJson['results']['sunset']);
       });
     } catch (e) {
       print(e);
     }
+  }
+
+  Future<void> _refresh() async {
+    getLocation();
   }
 
   @override
@@ -84,7 +91,13 @@ class _WeatherState extends State<Weather> {
         child: Center(
       child: loading
           ? CircularProgressIndicator()
-          : Running(weatherData['properties']['timeseries']),
+          : RefreshIndicator(
+              onRefresh: _refresh,
+              child: CustomScrollView(slivers: [
+                SliverToBoxAdapter(
+                    child: Running(
+                        weatherData['properties']['timeseries'], sunData))
+              ])),
     ));
   }
 }
@@ -94,4 +107,19 @@ class LatLon {
   final double longitude;
 
   LatLon(this.latitude, this.longitude);
+}
+
+class SunData {
+  late DateTime sunrise;
+  late DateTime sunset;
+
+  SunData(String sunrise, String sunset) {
+    this.sunrise = DateTime.parse(sunrise);
+    this.sunset = DateTime.parse(sunset);
+  }
+  @override
+  String toString() {
+    // TODO: implement toString
+    return 'sunrise: $sunrise, sunset: $sunset';
+  }
 }

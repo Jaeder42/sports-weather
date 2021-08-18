@@ -1,21 +1,25 @@
 import 'package:flutter/material.dart';
 import 'package:sport_weather/widgets/rain_chart.dart';
 import 'package:sport_weather/widgets/current.dart';
+import 'package:sport_weather/widgets/sun_chart.dart';
 
 import '../temp_chart.dart';
+import '../weather.dart';
 
 class Running extends StatefulWidget {
   final dynamic weatherData;
-  Running(this.weatherData);
+  final SunData sunData;
+  Running(this.weatherData, this.sunData);
   @override
   State<StatefulWidget> createState() {
-    return _RunningState(weatherData);
+    return _RunningState(weatherData, this.sunData);
   }
 }
 
 class _RunningState extends State<Running> {
   dynamic weatherData;
-  _RunningState(this.weatherData);
+  SunData sunData;
+  _RunningState(this.weatherData, this.sunData);
 
   @override
   Widget build(BuildContext context) {
@@ -37,10 +41,11 @@ class _RunningState extends State<Running> {
                 Container(
                   height: 5,
                 ),
+                SunChart(sunData),
                 Text('Rain'),
-                RainChart(weatherData),
+                RainChart(weatherData, sunData),
                 Text('Temperature'),
-                TempChart(weatherData)
+                TempChart(weatherData, sunData)
               ])),
         ],
       ),

@@ -2,32 +2,48 @@ import 'dart:math';
 
 import 'package:flutter/material.dart';
 import 'package:charts_flutter/flutter.dart' as charts;
+import 'package:sport_weather/widgets/weather.dart';
 
 class TempChart extends StatelessWidget {
   late final chanceofRain;
+  final SunData sunData;
+  late final startArray;
 
-  TempChart(weatherData) {
+  TempChart(weatherData, this.sunData) {
     chanceofRain = _getData(weatherData, 'air_temperature');
   }
   _getData(weatherData, value) {
     // fill data with hours since sunup
     // Stop at an hour after sunset (maybe)
-    List<Point> chanceData = [];
-    for (int i = 0; i < min(10, weatherData.length); i++) {
-      var nextHour = weatherData[i]['data']['instant'];
+    var firstTime = DateTime.parse(weatherData[0]['time']);
+    var firstValue = weatherData[0]['data']['instant']['details']['$value'];
+
+    var noPoints = sunData.sunset.difference(sunData.sunrise).inHours;
+    startArray = firstTime.difference(sunData.sunrise).inHours - 1;
+
+    List<Point> data = List.generate(
+        noPoints,
+        (index) =>
+            Point(sunData.sunrise.add(Duration(hours: index)), firstValue));
+    int j = 0;
+    for (int i = startArray; i < noPoints; i++) {
+      var nextHour = weatherData[j]['data']['instant'];
       if (nextHour != null) {
         double chance = nextHour['details']['$value'];
-        chanceData.add(Point(DateTime.parse(weatherData[i]['time']), chance));
+        data[i] = (Point(DateTime.parse(weatherData[j]['time']), chance));
       }
+      j++;
     }
-    return chanceData;
+    return data;
   }
 
   _createData() {
     return [
       charts.Series<Point, DateTime>(
         id: 'Chance of precipitation',
-        colorFn: (_, __) => charts.MaterialPalette.deepOrange.shadeDefault,
+        colorFn: (_, index) => index! >= startArray
+            ? charts.MaterialPalette.deepOrange.shadeDefault
+            : charts.MaterialPalette.gray.shade900,
         domainFn: (Point point, _) => point.x,
         measureFn: (Point point, _) => point.y,
         data: chanceofRain,
